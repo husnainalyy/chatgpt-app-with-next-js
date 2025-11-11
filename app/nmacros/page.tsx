@@ -157,19 +157,19 @@ function MealCard({ meal }: MealCardProps) {
 
   return (
     <div className="mb-4">
-      {/* Main Card - Exact design from images */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm">
+      {/* Main Card - Breakdown expands within same card */}
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
         {/* Header Section - Icon, Name, Size */}
         <div className="p-4 sm:p-6">
           <div className="flex items-start gap-3 mb-4">
-            {/* Icon - Light grey square with rounded corners */}
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center">
+            {/* Icon - Using logo.png */}
+            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
               <Image
-                src="/icon.jpeg"
+                src="/logo.png"
                 alt="Meal icon"
                 width={56}
                 height={56}
-                className="w-full h-full object-cover rounded-lg"
+                className="w-full h-full object-cover"
               />
             </div>
 
@@ -225,9 +225,83 @@ function MealCard({ meal }: MealCardProps) {
             </div>
           </div>
         </div>
+
+        {/* Ingredients Breakdown - Part of same card, expands below */}
+        {showBreakdown && hasMultipleIngredients && (
+          <>
+            <div className="border-t border-gray-200"></div>
+            <div className="p-4 sm:p-6 pt-4 sm:pt-6">
+              {meal.ingredients.map((ingredient, ingredientIndex) => (
+                <div key={ingredientIndex} className={ingredientIndex > 0 ? "mt-6" : ""}>
+                  <div className="flex items-start gap-3 mb-4">
+                    {/* Icon - Using logo.png */}
+                    <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+                      <Image
+                        src="/logo.png"
+                        alt="Ingredient icon"
+                        width={56}
+                        height={56}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+
+                    {/* Ingredient Name and Serving Info */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
+                        {ingredient.name}
+                      </h3>
+                      <p className="text-sm sm:text-base text-gray-500">
+                        {ingredient.serving_info}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t border-gray-200 mb-4"></div>
+
+                  {/* Ingredient Nutrition Grid - Same style as main card */}
+                  <div className="grid grid-cols-4 gap-3 sm:gap-4">
+                    <div className="text-center">
+                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
+                        Calories
+                      </div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">
+                        {Math.round(ingredient.nutrients.calories)}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
+                        Protein (g)
+                      </div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">
+                        {Math.round(ingredient.nutrients.protein)}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
+                        Carbs (g)
+                      </div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">
+                        {Math.round(ingredient.nutrients.carbs)}
+                      </div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
+                        Fat (g)
+                      </div>
+                      <div className="text-lg sm:text-xl font-bold text-gray-900">
+                        {Math.round(ingredient.nutrients.fat)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Show Breakdown Button - Only for meals with multiple ingredients */}
+      {/* Show Breakdown Button - Outside card, below it */}
       {hasMultipleIngredients && (
         <div className="mt-3 text-center">
           <button
@@ -236,79 +310,6 @@ function MealCard({ meal }: MealCardProps) {
           >
             {showBreakdown ? "- Hide Breakdown" : "+ Show Breakdown"}
           </button>
-        </div>
-      )}
-
-      {/* Ingredients Breakdown - Show as cards matching main card design */}
-      {showBreakdown && hasMultipleIngredients && (
-        <div className="mt-4 space-y-4">
-          {meal.ingredients.map((ingredient, ingredientIndex) => (
-            <div key={ingredientIndex} className="bg-white border border-gray-200 rounded-2xl shadow-sm">
-              <div className="p-4 sm:p-6">
-                <div className="flex items-start gap-3 mb-4">
-                  {/* Icon */}
-                  <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center">
-                    <Image
-                      src="/icon.jpeg"
-                      alt="Ingredient icon"
-                      width={56}
-                      height={56}
-                      className="w-full h-full object-cover rounded-lg"
-                    />
-                  </div>
-
-                  {/* Ingredient Name and Serving Info */}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
-                      {ingredient.name}
-                    </h3>
-                    <p className="text-sm sm:text-base text-gray-500">
-                      {ingredient.serving_info}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Divider */}
-                <div className="border-t border-gray-200 mb-4"></div>
-
-                {/* Ingredient Nutrition Grid - Same style as main card */}
-                <div className="grid grid-cols-4 gap-3 sm:gap-4">
-                  <div className="text-center">
-                    <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                      Calories
-                    </div>
-                    <div className="text-lg sm:text-xl font-bold text-gray-900">
-                      {Math.round(ingredient.nutrients.calories)}
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                      Protein (g)
-                    </div>
-                    <div className="text-lg sm:text-xl font-bold text-gray-900">
-                      {Math.round(ingredient.nutrients.protein)}
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                      Carbs (g)
-                    </div>
-                    <div className="text-lg sm:text-xl font-bold text-gray-900">
-                      {Math.round(ingredient.nutrients.carbs)}
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                      Fat (g)
-                    </div>
-                    <div className="text-lg sm:text-xl font-bold text-gray-900">
-                      {Math.round(ingredient.nutrients.fat)}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
       )}
     </div>
