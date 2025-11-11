@@ -78,13 +78,14 @@ const handler = createMcpHandler(async (server) => {
     macrosWidget.id,
     {
       title: macrosWidget.title,
-      description: `You are a nutrition expert. When given a food description, analyze it using your knowledge and return a JSON object with nutritional information.
+      description: `You are a nutrition expert. When given a food description, analyze it using your knowledge and return a JSON object with nutritional information in the structuredContent field.
 
 CRITICAL INSTRUCTIONS:
 1. Use your built-in nutrition knowledge to analyze the food
 2. Extract weight/portion information from the description (e.g., "100g", "medium", "large")
 3. Calculate accurate nutritional values based on standard serving sizes
-4. Return ONLY valid JSON in the exact structure specified below
+4. You MUST populate the structuredContent field with the analyzed data in the exact JSON structure specified below
+5. The structuredContent must contain dailyTotals and loggedMeals arrays with complete nutritional data
 
 RULES FOR MEAL GROUPING:
 - If items are part of a COMBO/MEAL/DEAL or mentioned WITH each other: Create ONE meal with items as ingredients
@@ -155,17 +156,16 @@ EXAMPLES:
             },
           ],
           structuredContent: {
-            // ChatGPT will populate this entire object based on its analysis
-            // The tool description above provides detailed instructions
-            // ChatGPT uses its built-in model to:
-            // 1. Parse the food description
-            // 2. Extract portion/weight information
-            // 3. Calculate nutritional values
-            // 4. Group items into meals correctly
-            // 5. Return dailyTotals and loggedMeals arrays
+            // IMPORTANT: ChatGPT must populate this object with the analyzed meal data
+            // The tool description instructs ChatGPT to analyze the food and return:
+            // - dailyTotals: { calories, protein, carbs, fat }
+            // - loggedMeals: array of meal objects with ingredients
+            // ChatGPT uses its built-in model to analyze and generate this data
             foodDescription: foodDescription,
-            // ChatGPT will add dailyTotals and loggedMeals here
-            // following the exact structure specified in the tool description
+            // ChatGPT MUST add dailyTotals and loggedMeals here based on its analysis
+            // Example structure ChatGPT should generate:
+            // dailyTotals: { calories: 57, protein: 1, carbs: 14, fat: 0 }
+            // loggedMeals: [{ meal_name: "Blueberries", meal_size: "100g", ... }]
           },
           _meta: widgetMeta(macrosWidget),
         };

@@ -41,15 +41,40 @@ export default function Macros() {
     error?: string;
   }>();
 
-  // Extract meal data from tool output
-  const mealData: MealData | null =
-    toolOutput?.result?.structuredContent ||
-    toolOutput?.structuredContent ||
-    null;
+  // Debug: Log what we're receiving
+  if (typeof window !== "undefined") {
+    console.log("Tool Output:", toolOutput);
+    console.log("Tool Output Keys:", toolOutput ? Object.keys(toolOutput) : "null");
+  }
+
+  // Extract meal data from tool output - try multiple paths
+  let mealData: MealData | null = null;
+  
+  // Try different data paths
+  if (toolOutput?.result?.structuredContent) {
+    mealData = toolOutput.result.structuredContent as MealData;
+  } else if (toolOutput?.structuredContent) {
+    mealData = toolOutput.structuredContent as MealData;
+  } else if (toolOutput?.result) {
+    // Sometimes data might be directly in result
+    mealData = toolOutput.result as MealData;
+  } else if (toolOutput && typeof toolOutput === 'object') {
+    // Check if toolOutput itself is the meal data
+    if ('loggedMeals' in toolOutput || 'dailyTotals' in toolOutput) {
+      mealData = toolOutput as MealData;
+    }
+  }
 
   // Check for errors
   const error = mealData?.error || toolOutput?.error;
   const meals = mealData?.loggedMeals || [];
+
+  // Debug: Log extracted data
+  if (typeof window !== "undefined") {
+    console.log("Meal Data:", mealData);
+    console.log("Meals:", meals);
+    console.log("Error:", error);
+  }
 
   // Show error state
   if (error) {
@@ -64,12 +89,19 @@ export default function Macros() {
     );
   }
 
-  // Show empty state
+  // Show empty state with debug info
   if (meals.length === 0) {
     return (
       <div className="min-h-screen bg-white text-black font-sans p-4">
         <div className="max-w-4xl mx-auto">
-          <p className="text-gray-500 text-center">No meal data available</p>
+          <p className="text-gray-500 text-center mb-4">No meal data available</p>
+          {/* Debug info - remove in production */}
+          {typeof window !== "undefined" && toolOutput && (
+            <div className="bg-gray-100 border border-gray-300 rounded p-4 text-xs font-mono overflow-auto max-h-96">
+              <p className="font-bold mb-2">Debug Info (check browser console for more):</p>
+              <pre>{JSON.stringify(toolOutput, null, 2)}</pre>
+            </div>
+          )}
         </div>
       </div>
     );
