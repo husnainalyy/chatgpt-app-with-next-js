@@ -164,23 +164,57 @@ EXAMPLES:
               type: "text",
               text: `Analyze this food: "${foodDescription}"
 
-You must analyze this food using your nutrition knowledge and return a complete JSON object with:
-- dailyTotals: { calories, protein, carbs, fat }
-- loggedMeals: array of meal objects with meal_name, meal_size, total_nutrients, and ingredients
+You MUST analyze this food using your nutrition knowledge and return a complete JSON object. Generate the analysis NOW and return it in this exact format (valid JSON only, no markdown, no code blocks):
 
-Return the analysis in the structuredContent field with the exact structure specified in the tool description.`,
+{
+  "dailyTotals": {
+    "calories": <number>,
+    "protein": <number>,
+    "carbs": <number>,
+    "fat": <number>
+  },
+  "loggedMeals": [
+    {
+      "meal_name": "<meal name>",
+      "meal_size": "<size>",
+      "total_nutrients": {
+        "calories": <number>,
+        "protein": <number>,
+        "carbs": <number>,
+        "fat": <number>
+      },
+      "ingredients": [
+        {
+          "name": "<ingredient name>",
+          "brand": "<brand>",
+          "serving_info": "<serving info>",
+          "nutrients": {
+            "calories": <number>,
+            "protein": <number>,
+            "carbs": <number>,
+            "fat": <number>
+          }
+        }
+      ]
+    }
+  ]
+}
+
+Return ONLY the JSON object with real nutritional values.`,
             },
           ],
           structuredContent: {
-            // ChatGPT MUST analyze the food and populate this structure
-            // Return the complete analyzed data here:
+            // ChatGPT MUST analyze "${foodDescription}" and replace these placeholder values
+            // with real nutritional data based on your analysis
             foodDescription: foodDescription,
-            dailyTotals: null, // ChatGPT must replace with: { calories: number, protein: number, carbs: number, fat: number }
-            loggedMeals: null, // ChatGPT must replace with array of meal objects
-            // 
-            // ChatGPT should analyze "${foodDescription}" and return:
-            // dailyTotals: { calories: <calculated>, protein: <calculated>, carbs: <calculated>, fat: <calculated> }
-            // loggedMeals: [{ meal_name: "...", meal_size: "...", total_nutrients: {...}, ingredients: [...] }]
+            // REPLACE THESE PLACEHOLDERS with actual analyzed data:
+            dailyTotals: {
+              calories: 0, // Replace with calculated value
+              protein: 0,   // Replace with calculated value  
+              carbs: 0,    // Replace with calculated value
+              fat: 0       // Replace with calculated value
+            },
+            loggedMeals: [] // Replace with array of analyzed meal objects
           },
           _meta: widgetMeta(macrosWidget),
         };
