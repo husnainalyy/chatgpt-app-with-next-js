@@ -78,27 +78,13 @@ const handler = createMcpHandler(async (server) => {
     macrosWidget.id,
     {
       title: macrosWidget.title,
-      description: `You are a nutrition expert. When given a food description, you MUST:
-1. Analyze the foodDescription using your built-in nutrition knowledge
-2. Generate complete meal data with dailyTotals and loggedMeals
-3. Pass the analyzed data in the analyzedData parameter when calling this tool
+      description: `Analyze food descriptions and return nutritional information. You can optionally provide pre-analyzed data in the analyzedData parameter. If not provided, the tool will use ChatGPT's model via API to analyze the food.
 
-CRITICAL: You must analyze the food FIRST, then call this tool with BOTH foodDescription AND analyzedData parameters populated with the complete analyzed meal data.
-
-The analyzedData parameter MUST contain:
+OPTIONAL: If you want to analyze the food yourself using your built-in knowledge, provide the analyzedData parameter with:
 - dailyTotals: { calories: number, protein: number, carbs: number, fat: number }
 - loggedMeals: array of complete meal objects with ingredients
 
-STEP-BY-STEP PROCESS:
-1. Read the foodDescription from the user
-2. Use your nutrition knowledge to analyze the food
-3. Extract weight/portion information (e.g., "100g", "medium", "large")
-4. Calculate accurate nutritional values based on standard serving sizes
-5. Group items into meals according to the rules below
-6. Generate the complete JSON structure with dailyTotals and loggedMeals
-7. Call this tool with foodDescription AND analyzedData parameters both populated
-
-YOU MUST PROVIDE THE COMPLETE ANALYSIS in the analyzedData parameter - do not leave it empty.
+If analyzedData is not provided, the tool will automatically analyze the food using ChatGPT's model.
 
 RULES FOR MEAL GROUPING:
 - If items are part of a COMBO/MEAL/DEAL or mentioned WITH each other: Create ONE meal with items as ingredients
@@ -187,18 +173,138 @@ EXAMPLES:
           };
         }
 
-        // If analyzedData not provided, return placeholder
-        // ChatGPT should analyze and call with analyzedData in the first call
+        // If analyzedData not provided, use OpenAI API to generate it
+        // This uses ChatGPT's model via API to analyze the food
+        const apiKey = process.env.OPENAI_API_KEY;
+        
+        if (!apiKey) {
+          return {
+            content: [
+              {
+                type: "text",
+                text: `Error: OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.`,
+              },
+            ],
+            structuredContent: {
+              error: "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.",
+            },
+            _meta: widgetMeta(macrosWidget),
+          };
+        }
+
+        const prompt = `You are a nutrition expert. Analyze the following food description and return ONLY a valid JSON object (no markdown, no code blocks, no extra text) with this exact structure:
+
+IMPORTANT RULES:
+1. MEAL vs INGREDIENTS logic:
+   - If items are part of a COMBO/DEAL/MEAL (like "Big Mac Meal", "Combo", "Deal", or items mentioned WITH each other using "with"): Create ONE meal with ALL items as ingredients
+   - If items are SEPARATE/INDEPENDENT foods mentioned with "and" but NOT part of a combo: Create SEPARATE meals for each
+   
+2. Examples of ONE MEAL (items as ingredients):
+   - "Big Mac deal" → 1 meal named "Big Mac Meal" with ingredients: Big Mac burger, fries, drink
+   - "burger with fries and coke" → 1 meal with 3 ingredients
+   - "chicken combo" → 1 meal with all combo items as ingredients
+   - "pizza with wings" → 1 meal with 2 ingredients
+
+3. Examples of SEPARATE MEALS:
+   - "pizza and burger" → 2 separate meals (Pizza, Burger)
+   - "I had chicken then later ate ice cream" → 2 separate meals
+   - "breakfast was eggs, lunch was sandwich" → 2 separate meals
+
+4. Calculate dailyTotals as the sum of all meals' nutrients.
+5. YOU MUST PROVIDE REALISTIC NUTRITIONAL VALUES - DO NOT USE ZEROS! Use standard serving sizes and accurate calorie/macro estimates.
+
+{
+  "dailyTotals": {
+    "calories": <sum of all meals>,
+    "protein": <sum of all meals in grams>,
+    "carbs": <sum of all meals in grams>,
+    "fat": <sum of all meals in grams>
+  },
+  "loggedMeals": [
+    {
+      "meal_name": "Meal Name",
+      "meal_size": "Small/Medium/Large or specific size like '100g' or '6 pieces'",
+      "total_nutrients": {
+        "calories": <actual number>,
+        "protein": <actual number in grams>,
+        "carbs": <actual number in grams>,
+        "fat": <actual number in grams>
+      },
+      "ingredients": [
+        {
+          "name": "Ingredient Name",
+          "brand": "Brand Name or Generic",
+          "serving_info": "1 serving (Xg) or specific portion",
+          "nutrients": {
+            "calories": <actual number>,
+            "protein": <actual number in grams>,
+            "carbs": <actual number in grams>,
+            "fat": <actual number in grams>
+          }
+        }
+      ]
+    }
+  ]
+}
+
+For a pizza slice: ~285 calories, 12g protein, 36g carbs, 10g fat
+For a burger: ~540 calories, 25g protein, 40g carbs, 25g fat
+For fries (medium): ~365 calories, 4g protein, 48g carbs, 17g fat
+For a coke (medium): ~210 calories, 0g protein, 58g carbs, 0g fat
+
+Food description: "${foodDescription}"
+
+Return ONLY the JSON object with REAL nutritional values, nothing else.`;
+
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({
+            model: "gpt-4o-mini",
+            messages: [
+              {
+                role: "system",
+                content: "You are a nutrition expert that returns ONLY valid JSON responses with no additional text or formatting."
+              },
+              {
+                role: "user",
+                content: prompt
+              }
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.7
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error?.message || "Failed to process food data");
+        }
+
+        const responseData = await response.json();
+        const content = responseData.choices[0].message.content;
+        
+        // Parse and validate the JSON response
+        const data = JSON.parse(content);
+
+        if (!data.dailyTotals || !data.loggedMeals) {
+          throw new Error("Invalid response format from AI. Please try again.");
+        }
+
+        // Return the analyzed data
         return {
           content: [
             {
               type: "text",
-              text: `Please analyze "${foodDescription}" using your nutrition knowledge and call this tool with the analyzedData parameter populated with the complete meal data.`,
+              text: `Food analyzed: ${foodDescription}`,
             },
           ],
           structuredContent: {
-            foodDescription: foodDescription,
-            error: "Please call this tool with the analyzedData parameter containing the analyzed meal data.",
+            dailyTotals: data.dailyTotals,
+            loggedMeals: data.loggedMeals,
           },
           _meta: widgetMeta(macrosWidget),
         };
