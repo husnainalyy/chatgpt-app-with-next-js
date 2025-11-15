@@ -304,7 +304,6 @@ function MealCard({ meal }: MealCardProps) {
                 <div className="border-t border-gray-200 "></div>
                 {/* nutrition grid */}
                 <div className="px-6 pt-4 flex flex-col">
-                    
                     <div className="flex justify-between px-8 sm:gap-4">
                         <div className="flex flex-col justify-center items-center  gap-1">
                             <p className="text-sm sm:text-base text-gray-500">Calories</p>
@@ -333,9 +332,9 @@ function MealCard({ meal }: MealCardProps) {
                     </div>
                     {/* nutrition breakdown */}
                     {showBreakdown && hasMultipleIngredients && (
-                        <div className=" rounded-b-2xl ">
-                            <div className="border-t border-gray-300"></div>
-                            <div className=" px-3 ">
+                        <div className=" rounded-b-2xl px-3">
+                            
+                            <div className="  border-t border-gray-300">
                                 {meal.ingredients.map((ingredient, ingredientIndex) => (
                                     <div
                                         key={ingredientIndex}
@@ -379,9 +378,7 @@ function MealCard({ meal }: MealCardProps) {
                     )}
                 </div>
             </div>
-
         </div>
-
     );
 }
 

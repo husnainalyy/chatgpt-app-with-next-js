@@ -1,5 +1,4 @@
 {
   "/api/analyze-food/route": "app/api/analyze-food/route.js",
-  "/nmacros/page": "app/nmacros/page.js",
   "/web/page": "app/web/page.js"
 }
