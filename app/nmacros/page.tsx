@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useWidgetProps, useMaxHeight } from "../hooks";
 
-// Type definitions
 interface Nutrients {
   calories: number;
   protein: number;
@@ -43,10 +42,8 @@ export default function Macros() {
     error?: string;
   }>();
 
-  // Extract meal data from tool output
   let mealData: MealData | null = null;
-  
-  // Try different data paths
+
   if (toolOutput?.result?.structuredContent) {
     mealData = toolOutput.result.structuredContent as MealData;
   } else if (toolOutput?.structuredContent) {
@@ -59,45 +56,36 @@ export default function Macros() {
     }
   }
 
-  // Check for errors
   const error = mealData?.error || toolOutput?.error;
   const meals = mealData?.loggedMeals || [];
 
-  // Handle loading state - show loading when no data yet
   useEffect(() => {
-    // If we have meals, stop loading
     if (meals.length > 0) {
       setIsLoading(false);
       return;
     }
-    
-    // If toolOutput is null, we're still waiting
+
     if (toolOutput === null) {
       setIsLoading(true);
       return;
     }
-    
-    // If we have toolOutput but no meals, check if it's still processing
-    // (e.g., has foodDescription but no loggedMeals yet means API is processing)
+
     if (toolOutput && typeof toolOutput === 'object') {
       const hasFoodDescription = 'foodDescription' in toolOutput;
       const hasMeals = 'loggedMeals' in toolOutput && Array.isArray(toolOutput.loggedMeals) && toolOutput.loggedMeals.length > 0;
-      
+
       if (hasFoodDescription && !hasMeals) {
-        // API is processing - show loading
         setIsLoading(true);
         return;
       }
     }
-    
-    // Otherwise, stop loading
+
     setIsLoading(false);
   }, [meals.length, toolOutput]);
 
-  // Show error state
   if (error) {
     return (
-      <div 
+      <div
         className="bg-white text-black font-sans"
         style={{ maxHeight: maxHeight ?? undefined }}
       >
@@ -110,10 +98,9 @@ export default function Macros() {
     );
   }
 
-  // Show loading state
   if (isLoading) {
     return (
-      <div 
+      <div
         className="bg-white text-black font-sans"
         style={{ maxHeight: maxHeight ?? undefined }}
       >
@@ -128,10 +115,9 @@ export default function Macros() {
     );
   }
 
-  // Show empty state
   if (meals.length === 0) {
     return (
-      <div 
+      <div
         className="bg-white text-black font-sans p-4"
         style={{ maxHeight: maxHeight ?? undefined }}
       >
@@ -143,12 +129,11 @@ export default function Macros() {
   }
 
   return (
-    <div 
+    <div
       className="bg-white text-black font-sans"
       style={{ maxHeight: maxHeight ?? undefined }}
     >
       <main className="max-w-4xl mx-auto py-3 sm:py-4">
-        {/* Meal Cards */}
         <div className="space-y-4">
           {meals.map((meal, mealIndex) => (
             <MealCard key={mealIndex} meal={meal} />
@@ -159,7 +144,6 @@ export default function Macros() {
   );
 }
 
-// Meal Card Component
 interface MealCardProps {
   meal: Meal;
 }
@@ -169,123 +153,105 @@ function MealCard({ meal }: MealCardProps) {
   const hasMultipleIngredients = meal.ingredients.length > 1;
 
   return (
-    <div className="">
-      {/* Main Card - Breakdown expands within same card */}
-      <div className="bg-white ">
-        {/* Header Section - Icon, Name, Size */}
-        <div className="">
-          <div className="flex items-start gap-3 mb-4 px-3">
-            {/* Icon - Using logo.png */}
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-              <Image
-                src="/logo.png"
-                alt="Meal icon"
-                width={56}
-                height={56}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Title and Size/Weight */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
-                  {meal.meal_name}
-                </h3>
-                {/* Chevron Button - Only show if multiple ingredients */}
-                {hasMultipleIngredients && (
-                  <button
-                    onClick={() => setShowBreakdown(!showBreakdown)}
-                    className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-                    aria-label={showBreakdown ? "Hide breakdown" : "Show breakdown"}
-                  >
-                    <svg
-                      className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-600 transition-transform ${
-                        showBreakdown ? "rotate-180" : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {meal.meal_size && (
-                <p className="text-sm sm:text-base text-gray-500">
-                  {meal.meal_size}
-                </p>
-              )}
-            </div>
+    <div>
+      <div className="flex justify-between items-center gap-3 mb-4 px-3">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+            <Image
+              src="/logo.png"
+              alt="Meal icon"
+              width={56}
+              height={56}
+              className="w-full h-full object-cover"
+            />
           </div>
-
-          {/* Divider */}
-          <div className="border-t border-gray-200 mb-4"></div>
-
-          {/* Nutrition Grid - Labels on top, values below */}
-          <div className="grid grid-cols-4 gap-3 sm:gap-4 px-3">
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Calories
-              </div>
-              <div className="text-lg sm:text-xl  text-gray-900">
-                {Math.round(meal.total_nutrients.calories)}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Protein (g)
-              </div>
-              <div className="text-lg sm:text-xl  text-gray-900">
-                {Math.round(meal.total_nutrients.protein)}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Carbs (g)
-              </div>
-              <div className="text-lg sm:text-xl  text-gray-900">
-                {Math.round(meal.total_nutrients.carbs)}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Fat (g)
-              </div>
-              <div className="text-lg sm:text-xl  text-gray-900">
-                {Math.round(meal.total_nutrients.fat)}
-              </div>
-            </div>
+          <div className="flex flex-col gap-1">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
+              {meal.meal_name}
+            </h3>
+            {meal.meal_size && (
+              <p className="text-sm sm:text-base text-gray-500">
+                {meal.meal_size}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Ingredients Breakdown - Part of same card, expands below */}
+
+        <div>
+          {hasMultipleIngredients && (
+            <button
+              onClick={() => setShowBreakdown(!showBreakdown)}
+              className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+              aria-label={showBreakdown ? "Hide breakdown" : "Show breakdown"}
+            >
+              <svg
+                className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-600 transition-transform ${showBreakdown ? "rotate-180" : ""
+                  }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="border-t border-gray-200 mb-4"></div>
+      {/* nutrition grid */}
+      <div className="px-3">
+        <div>
+          <div className="grid grid-cols-4 gap-3 sm:gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Calories</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.calories}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3 sm:gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Protein</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.protein}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3 sm:gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Carbs</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.carbs}</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-4 gap-3 sm:gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Fat</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.fat}</p>
+            </div>
+          </div>
+        </div>
+        {/* nutrition breakdown */}
         {showBreakdown && hasMultipleIngredients && (
-          <>
-            <div className="border-t border-gray-200"></div>
+          <div className="px-4 bg-[#5D5D5D] rounded-b-lg">
+            <div className="border-t border-gray-700"></div>
             <div className="p-4 sm:p-6 pt-4 sm:pt-6">
               {meal.ingredients.map((ingredient, ingredientIndex) => (
                 <div key={ingredientIndex} className={ingredientIndex > 0 ? "mt-4" : ""}>
-                  {/* Ingredient Name and Serving Info - Simple text style */}
-                  <div className="mb-3">
+                  <div className="mb-3 flex flex-col gap-1">
                     <span className="text-gray-500 text-xs sm:text-sm">
                       {ingredient.name}
                       {ingredient.serving_info && ` (${ingredient.serving_info})`}
                     </span>
-                    <span className="text-gray-900 text-xs sm:text-sm ml-2">
+                    <span className="text-gray-900 text-lg sm:text-lg ml-2">
                       Calories: {Math.round(ingredient.nutrients.calories)}, Protein: {Math.round(ingredient.nutrients.protein)}, Carbs: {Math.round(ingredient.nutrients.carbs)}, Fat: {Math.round(ingredient.nutrients.fat)}
                     </span>
                   </div>
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
