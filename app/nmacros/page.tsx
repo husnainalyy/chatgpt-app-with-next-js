@@ -222,9 +222,6 @@ function MealCard({ meal }: MealCardProps) {
         </div>
       </div>
 
-      {/* Divider - Full width line under meal name */}
-      <div className="border-t border-gray-200 -mx-6 sm:-mx-8 my-4"></div>
-
       {/* Nutrition Grid - Labels on top, values below */}
       <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-4">
         <div className="text-center">
