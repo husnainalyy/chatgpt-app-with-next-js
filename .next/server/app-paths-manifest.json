@@ -1,8 +1,1 @@
-{
-  "/_not-found/page": "app/_not-found/page.js",
-  "/custom-page/page": "app/custom-page/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js",
-  "/mcp/route": "app/mcp/route.js",
-  "/nmacros/page": "app/nmacros/page.js",
-  "/page": "app/page.js"
-}
+{}

@@ -147,7 +147,7 @@ export default function Macros() {
       className="bg-white text-black font-sans"
       style={{ maxHeight: maxHeight ?? undefined }}
     >
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+      <main className="max-w-4xl mx-auto py-3 sm:py-4">
         {/* Meal Cards */}
         <div className="space-y-4">
           {meals.map((meal, mealIndex) => (
@@ -174,7 +174,7 @@ function MealCard({ meal }: MealCardProps) {
       <div className="bg-white ">
         {/* Header Section - Icon, Name, Size */}
         <div className="">
-          <div className="flex items-start gap-3 mb-4 p-4 sm:p-6">
+          <div className="flex items-start gap-3 mb-4 px-3">
             {/* Icon - Using logo.png */}
             <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
               <Image
@@ -226,15 +226,15 @@ function MealCard({ meal }: MealCardProps) {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-gray-200 mb-4">sdf</div>
+          <div className="border-t border-gray-200 mb-4"></div>
 
           {/* Nutrition Grid - Labels on top, values below */}
-          <div className="grid grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6">
+          <div className="grid grid-cols-4 gap-3 sm:gap-4 px-3">
             <div className="text-center">
               <div className="text-gray-500 text-xs sm:text-sm mb-1">
                 Calories
               </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
+              <div className="text-lg sm:text-xl  text-gray-900">
                 {Math.round(meal.total_nutrients.calories)}
               </div>
             </div>
@@ -242,7 +242,7 @@ function MealCard({ meal }: MealCardProps) {
               <div className="text-gray-500 text-xs sm:text-sm mb-1">
                 Protein (g)
               </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
+              <div className="text-lg sm:text-xl  text-gray-900">
                 {Math.round(meal.total_nutrients.protein)}
               </div>
             </div>
@@ -250,7 +250,7 @@ function MealCard({ meal }: MealCardProps) {
               <div className="text-gray-500 text-xs sm:text-sm mb-1">
                 Carbs (g)
               </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
+              <div className="text-lg sm:text-xl  text-gray-900">
                 {Math.round(meal.total_nutrients.carbs)}
               </div>
             </div>
@@ -258,7 +258,7 @@ function MealCard({ meal }: MealCardProps) {
               <div className="text-gray-500 text-xs sm:text-sm mb-1">
                 Fat (g)
               </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
+              <div className="text-lg sm:text-xl  text-gray-900">
                 {Math.round(meal.total_nutrients.fat)}
               </div>
             </div>
