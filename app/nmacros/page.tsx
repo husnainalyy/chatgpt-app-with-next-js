@@ -226,7 +226,7 @@ function MealCard({ meal }: MealCardProps) {
           </div>
 
           {/* Divider */}
-          <div className="border-t border-gray-200 mb-4"></div>
+          <div className="border-t border-gray-200 mb-4">sdf</div>
 
           {/* Nutrition Grid - Labels on top, values below */}
           <div className="grid grid-cols-4 gap-3 sm:gap-4 p-4 sm:p-6">
