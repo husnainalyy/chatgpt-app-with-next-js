@@ -83,6 +83,24 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../app/web/page.tsx
+{
+  type __IsExpected<Specific extends AppPageConfig<"/web">> = Specific
+  const handler = {} as typeof import("../../app/web/page.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../app/api/analyze-food/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/analyze-food">> = Specific
+  const handler = {} as typeof import("../../app/api/analyze-food/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../app/mcp/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/mcp">> = Specific

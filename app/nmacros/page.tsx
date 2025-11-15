@@ -136,7 +136,9 @@ export default function Macros() {
       <main className="max-w-4xl mx-auto py-3 sm:py-4">
         <div className="space-y-4">
           {meals.map((meal, mealIndex) => (
-            <MealCard key={mealIndex} meal={meal} />
+            <div key={mealIndex} className="mb-0 shadow-none">
+              <MealCard meal={meal} />
+            </div>
           ))}
         </div>
       </main>
@@ -153,106 +155,133 @@ function MealCard({ meal }: MealCardProps) {
   const hasMultipleIngredients = meal.ingredients.length > 1;
 
   return (
-    <div>
-      <div className="flex justify-between items-center gap-3 mb-4 px-3">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-            <Image
-              src="/logo.png"
-              alt="Meal icon"
-              width={56}
-              height={56}
-              className="w-full h-full object-cover"
-            />
+    <div className="flex justify-center w-full">
+      <div className="w-2xl py-4">
+        <div className="flex justify-between items-center gap-3 p-4 pt-0">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
+              <Image
+                src="/logo.png"
+                alt="Meal icon"
+                width={56}
+                height={56}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex flex-col">
+              <h3 className="text-xl font-normal text-gray-900">
+                {meal.meal_name}
+              </h3>
+              {meal.meal_size && (
+                <p className="text-lg text-gray-500">
+                  {meal.meal_size}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
-              {meal.meal_name}
-            </h3>
-            {meal.meal_size && (
-              <p className="text-sm sm:text-base text-gray-500">
-                {meal.meal_size}
-              </p>
+
+          <div>
+            {hasMultipleIngredients && (
+              <button
+                onClick={() => setShowBreakdown(!showBreakdown)}
+                className="flex-shrink-0 w-14 h-14  bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+                aria-label={showBreakdown ? "Hide breakdown" : "Show breakdown"}
+              >
+                <svg
+                  className={`w-8 h-8  text-gray-600 transition-transform ${showBreakdown ? "rotate-180" : ""
+                    }`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
             )}
           </div>
         </div>
+        <div className="border-t border-gray-200 "></div>
+        {/* nutrition grid */}
+        <div className="px-6 pt-4 flex flex-col">
 
-
-        <div>
-          {hasMultipleIngredients && (
-            <button
-              onClick={() => setShowBreakdown(!showBreakdown)}
-              className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
-              aria-label={showBreakdown ? "Hide breakdown" : "Show breakdown"}
-            >
-              <svg
-                className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-600 transition-transform ${showBreakdown ? "rotate-180" : ""
-                  }`}
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
+          <div className="flex justify-between px-8 sm:gap-4">
+            <div className="flex flex-col justify-center items-center  gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Calories</p>
+              <p className="text-lg sm:text-xl font-normal text-gray-900">
+                {Math.round(meal.total_nutrients.calories)}
+              </p>
+            </div>
+            <div className="flex flex-col justify-center items-center  gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Protein (g)</p>
+              <p className="text-lg sm:text-xl font-normal text-gray-900">
+                {Math.round(meal.total_nutrients.protein)}
+              </p>
+            </div>
+            <div className="flex flex-col justify-center items-center  gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Carbs (g)</p>
+              <p className="text-lg sm:text-xl font-normal text-gray-900">
+                {Math.round(meal.total_nutrients.carbs)}
+              </p>
+            </div>
+            <div className="flex flex-col justify-center items-center  gap-1">
+              <p className="text-sm sm:text-base text-gray-500">Fat (g)</p>
+              <p className="text-lg sm:text-xl font-normal text-gray-900">
+                {Math.round(meal.total_nutrients.fat)}
+              </p>
+            </div>
+          </div>
+          {/* nutrition breakdown */}
+          {showBreakdown && hasMultipleIngredients && (
+            <div className=" rounded-b-2xl ">
+              <div className="border-t border-gray-300"></div>
+              <div className=" px-3 ">
+                {meal.ingredients.map((ingredient, ingredientIndex) => (
+                  <div
+                    key={ingredientIndex}
+                    className={`py-2 rounded ${ingredientIndex % 2 === 0 ? "bg-gray-100" : "bg-gray-50"}`}
+                  >
+                    {/* Ingredient name on the left */}
+                    <div className="mb-2">
+                      <span className="text-gray-500 text-xs sm:text-sm px-4">
+                        {ingredient.name}
+                        {ingredient.serving_info &&
+                          ` (${ingredient.serving_info})`}
+                      </span>
+                    </div>
+                    {/* Values in 4-column grid aligned with headers above */}
+                    <div className="flex justify-between px-8 sm:gap-4">
+                      <div className="flex flex-col justify-center items-center gap-1">
+                        <p className="text-lg sm:text-xl font-normal text-gray-900">
+                          {Math.round(ingredient.nutrients.calories)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col justify-center items-center gap-1">
+                        <p className="text-lg sm:text-xl font-normal text-gray-900">
+                          {Math.round(ingredient.nutrients.protein)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col justify-center items-center gap-1">
+                        <p className="text-lg sm:text-xl font-normal text-gray-900">
+                          {Math.round(ingredient.nutrients.carbs)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col justify-center items-center gap-1">
+                        <p className="text-lg sm:text-xl font-normal text-gray-900">
+                          {Math.round(ingredient.nutrients.fat)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
-      </div>
-      <div className="border-t border-gray-200 mb-4"></div>
-      {/* nutrition grid */}
-      <div className="px-3">
-        <div>
-          <div className="grid grid-cols-4 gap-3 sm:gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="text-sm sm:text-base text-gray-500">Calories</p>
-              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.calories}</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-4 gap-3 sm:gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="text-sm sm:text-base text-gray-500">Protein</p>
-              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.protein}</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-4 gap-3 sm:gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="text-sm sm:text-base text-gray-500">Carbs</p>
-              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.carbs}</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-4 gap-3 sm:gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="text-sm sm:text-base text-gray-500">Fat</p>
-              <p className="text-lg sm:text-xl font-semibold text-gray-900">{meal.total_nutrients.fat}</p>
-            </div>
-          </div>
-        </div>
-        {/* nutrition breakdown */}
-        {showBreakdown && hasMultipleIngredients && (
-          <div className="px-4 bg-[#5D5D5D] rounded-b-lg">
-            <div className="border-t border-gray-700"></div>
-            <div className="p-4 sm:p-6 pt-4 sm:pt-6">
-              {meal.ingredients.map((ingredient, ingredientIndex) => (
-                <div key={ingredientIndex} className={ingredientIndex > 0 ? "mt-4" : ""}>
-                  <div className="mb-3 flex flex-col gap-1">
-                    <span className="text-gray-500 text-xs sm:text-sm">
-                      {ingredient.name}
-                      {ingredient.serving_info && ` (${ingredient.serving_info})`}
-                    </span>
-                    <span className="text-gray-900 text-lg sm:text-lg ml-2">
-                      Calories: {Math.round(ingredient.nutrients.calories)}, Protein: {Math.round(ingredient.nutrients.protein)}, Carbs: {Math.round(ingredient.nutrients.carbs)}, Fat: {Math.round(ingredient.nutrients.fat)}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
