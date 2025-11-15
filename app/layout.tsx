@@ -23,10 +23,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // baseURL should be defined at runtime on Vercel
+  // If undefined, the client-side code will handle it
+  const effectiveBaseUrl = baseURL || "";
+  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <NextChatSDKBootstrap baseUrl={baseURL} />
+        <NextChatSDKBootstrap baseUrl={effectiveBaseUrl} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -43,22 +47,6 @@ function NextChatSDKBootstrap({ baseUrl }: { baseUrl: string }) {
       <base href={baseUrl}></base>
       <script>{`window.innerBaseUrl = ${JSON.stringify(baseUrl)}`}</script>
       <script>{`window.__isChatGptApp = typeof window.openai !== "undefined";`}</script>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            // Suppress HostAPI method not found warnings
-            const originalConsoleError = console.error;
-            console.error = function(...args) {
-              const message = args[0]?.toString() || '';
-              if (message.includes('HostAPI method not found')) {
-                // Suppress HostAPI method not found warnings (e.g., notifyBackgroundColor)
-                return;
-              }
-              originalConsoleError.apply(console, args);
-            };
-          `,
-        }}
-      />
       <script>
         {"(" +
           (() => {
