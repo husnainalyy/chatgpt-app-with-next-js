@@ -156,7 +156,7 @@ function MealCard({ meal }: MealCardProps) {
 
   return (
     <div className="flex justify-center w-full">
-      <div className="w-2xl py-4">
+      <div className="w-2xl border-b py-4">
         <div className="flex justify-between items-center gap-3 p-4 pt-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
