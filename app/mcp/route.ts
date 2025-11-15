@@ -177,7 +177,13 @@ IMPORTANT RULES:
    - "breakfast was eggs, lunch was sandwich" → 2 separate meals
 
 4. Calculate dailyTotals as the sum of all meals' nutrients.
-5. YOU MUST PROVIDE REALISTIC NUTRITIONAL VALUES - DO NOT USE ZEROS! Use standard serving sizes and accurate calorie/macro estimates.
+5. CRITICAL: For each meal, the total_nutrients MUST equal the sum of all ingredient nutrients. 
+   - total_nutrients.calories = sum of all ingredient.nutrients.calories
+   - total_nutrients.protein = sum of all ingredient.nutrients.protein
+   - total_nutrients.carbs = sum of all ingredient.nutrients.carbs
+   - total_nutrients.fat = sum of all ingredient.nutrients.fat
+   - Calculate total_nutrients by adding up all ingredient values, do NOT estimate separately!
+6. YOU MUST PROVIDE REALISTIC NUTRITIONAL VALUES - DO NOT USE ZEROS! Use standard serving sizes and accurate calorie/macro estimates.
 
 {
   "dailyTotals": {
@@ -260,7 +266,53 @@ Return ONLY the JSON object with REAL nutritional values, nothing else.`;
           throw new Error("Invalid response format from AI. Please try again.");
         }
 
-        // Return the analyzed data
+        // Validate and recalculate totals to ensure consistency
+        const correctedMeals = data.loggedMeals.map((meal: any) => {
+          if (meal.ingredients && meal.ingredients.length > 0) {
+            // Calculate totals from ingredients
+            const calculatedTotals = meal.ingredients.reduce(
+              (acc: any, ingredient: any) => ({
+                calories: acc.calories + (ingredient.nutrients?.calories || 0),
+                protein: acc.protein + (ingredient.nutrients?.protein || 0),
+                carbs: acc.carbs + (ingredient.nutrients?.carbs || 0),
+                fat: acc.fat + (ingredient.nutrients?.fat || 0),
+              }),
+              { calories: 0, protein: 0, carbs: 0, fat: 0 }
+            );
+
+            // Round values
+            calculatedTotals.calories = Math.round(calculatedTotals.calories);
+            calculatedTotals.protein = Math.round(calculatedTotals.protein);
+            calculatedTotals.carbs = Math.round(calculatedTotals.carbs);
+            calculatedTotals.fat = Math.round(calculatedTotals.fat);
+
+            // Use calculated totals to ensure consistency
+            return {
+              ...meal,
+              total_nutrients: calculatedTotals,
+            };
+          }
+          return meal;
+        });
+
+        // Recalculate dailyTotals from corrected meals
+        const correctedDailyTotals = correctedMeals.reduce(
+          (acc: any, meal: any) => ({
+            calories: acc.calories + (meal.total_nutrients?.calories || 0),
+            protein: acc.protein + (meal.total_nutrients?.protein || 0),
+            carbs: acc.carbs + (meal.total_nutrients?.carbs || 0),
+            fat: acc.fat + (meal.total_nutrients?.fat || 0),
+          }),
+          { calories: 0, protein: 0, carbs: 0, fat: 0 }
+        );
+
+        // Round daily totals
+        correctedDailyTotals.calories = Math.round(correctedDailyTotals.calories);
+        correctedDailyTotals.protein = Math.round(correctedDailyTotals.protein);
+        correctedDailyTotals.carbs = Math.round(correctedDailyTotals.carbs);
+        correctedDailyTotals.fat = Math.round(correctedDailyTotals.fat);
+
+        // Return the analyzed data with corrected totals
         return {
           content: [
             {
@@ -269,8 +321,8 @@ Return ONLY the JSON object with REAL nutritional values, nothing else.`;
             },
           ],
           structuredContent: {
-            dailyTotals: data.dailyTotals,
-            loggedMeals: data.loggedMeals,
+            dailyTotals: correctedDailyTotals,
+            loggedMeals: correctedMeals,
           },
           _meta: widgetMeta(macrosWidget),
         };
