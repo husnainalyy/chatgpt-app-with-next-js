@@ -29,6 +29,11 @@ function widgetMeta(widget: ContentWidget) {
 }
 
 const handler = createMcpHandler(async (server) => {
+  // Ensure baseURL is defined (should be available at runtime on Vercel)
+  if (!baseURL) {
+    throw new Error("baseURL is not defined. Please ensure VERCEL environment variables are set.");
+  }
+  
   // Get HTML for the macros widget page
   const macrosHtml = await getAppsSdkCompatibleHtml(baseURL, "/nmacros");
 
