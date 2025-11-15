@@ -147,7 +147,7 @@ export default function Macros() {
       className="bg-white text-black font-sans"
       style={{ maxHeight: maxHeight ?? undefined }}
     >
-      <main className="max-w-4xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+      <main className="max-w-4xl">
         {/* Meal Cards */}
         <div className="space-y-4">
           {meals.map((meal, mealIndex) => (
@@ -169,9 +169,9 @@ function MealCard({ meal }: MealCardProps) {
   const hasMultipleIngredients = meal.ingredients.length > 1;
 
   return (
-    <div className="mb-4">
+    <div className="">
       {/* Header Section - Icon, Name, Size, Chevron Button */}
-      <div className="mb-4">
+      <div className="">
         <div className="flex items-start gap-3">
           {/* Icon - Using logo.png */}
           <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
@@ -221,6 +221,9 @@ function MealCard({ meal }: MealCardProps) {
           )}
         </div>
       </div>
+
+      {/* Divider - Full width line under meal name */}
+      <div className="border-t border-gray-200 -mx-6 sm:-mx-8 my-4"></div>
 
       {/* Nutrition Grid - Labels on top, values below */}
       <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-4">
