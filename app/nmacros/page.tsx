@@ -170,159 +170,151 @@ function MealCard({ meal }: MealCardProps) {
 
   return (
     <div className="mb-4">
-      {/* Main Card - Breakdown expands within same card */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-        {/* Header Section - Icon, Name, Size */}
-        <div className="p-4 sm:p-6">
-          <div className="flex items-start gap-3 mb-4">
-            {/* Icon - Using logo.png */}
-            <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-              <Image
-                src="/logo.png"
-                alt="Meal icon"
-                width={56}
-                height={56}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Title and Size/Weight */}
-            <div className="flex-1 min-w-0">
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
-                {meal.meal_name}
-              </h3>
-              {meal.meal_size && (
-                <p className="text-sm sm:text-base text-gray-500">
-                  {meal.meal_size}
-                </p>
-              )}
-            </div>
+      {/* Header Section - Icon, Name, Size, Chevron Button */}
+      <div className="mb-4">
+        <div className="flex items-start gap-3">
+          {/* Icon - Using logo.png */}
+          <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
+            <Image
+              src="/logo.png"
+              alt="Meal icon"
+              width={56}
+              height={56}
+              className="w-full h-full object-cover"
+            />
           </div>
 
-          {/* Divider */}
-          <div className="border-t border-gray-200 mb-4"></div>
-
-          {/* Nutrition Grid - Labels on top, values below */}
-          <div className="grid grid-cols-4 gap-3 sm:gap-4">
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Calories
-              </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
-                {Math.round(meal.total_nutrients.calories)}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Protein (g)
-              </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
-                {Math.round(meal.total_nutrients.protein)}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Carbs (g)
-              </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
-                {Math.round(meal.total_nutrients.carbs)}
-              </div>
-            </div>
-            <div className="text-center">
-              <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                Fat (g)
-              </div>
-              <div className="text-lg sm:text-xl font-bold text-gray-900">
-                {Math.round(meal.total_nutrients.fat)}
-              </div>
-            </div>
+          {/* Title and Size/Weight */}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
+              {meal.meal_name}
+            </h3>
+            {meal.meal_size && (
+              <p className="text-sm sm:text-base text-gray-500">
+                {meal.meal_size}
+              </p>
+            )}
           </div>
+
+          {/* Chevron Button */}
+          {hasMultipleIngredients && (
+            <button
+              onClick={() => setShowBreakdown(!showBreakdown)}
+              className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors"
+            >
+              <svg
+                className={`w-4 h-4 sm:w-5 sm:h-5 text-gray-600 transition-transform ${
+                  showBreakdown ? "rotate-180" : ""
+                }`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+          )}
         </div>
-
-        {/* Ingredients Breakdown - Part of same card, expands below */}
-        {showBreakdown && hasMultipleIngredients && (
-          <>
-            <div className="border-t border-gray-200"></div>
-            <div className="p-4 sm:p-6 pt-4 sm:pt-6">
-              {meal.ingredients.map((ingredient, ingredientIndex) => (
-                <div key={ingredientIndex} className={ingredientIndex > 0 ? "mt-6" : ""}>
-                  <div className="flex items-start gap-3 mb-4">
-                    {/* Icon - Using logo.png */}
-                    <div className="flex-shrink-0 w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
-                      <Image
-                        src="/logo.png"
-                        alt="Ingredient icon"
-                        width={56}
-                        height={56}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* Ingredient Name and Serving Info */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-0.5">
-                        {ingredient.name}
-                      </h3>
-                      <p className="text-sm sm:text-base text-gray-500">
-                        {ingredient.serving_info}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Divider */}
-                  <div className="border-t border-gray-200 mb-4"></div>
-
-                  {/* Ingredient Nutrition Grid - Same style as main card */}
-                  <div className="grid grid-cols-4 gap-3 sm:gap-4">
-                    <div className="text-center">
-                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                        Calories
-                      </div>
-                      <div className="text-lg sm:text-xl font-bold text-gray-900">
-                        {Math.round(ingredient.nutrients.calories)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                        Protein (g)
-                      </div>
-                      <div className="text-lg sm:text-xl font-bold text-gray-900">
-                        {Math.round(ingredient.nutrients.protein)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                        Carbs (g)
-                      </div>
-                      <div className="text-lg sm:text-xl font-bold text-gray-900">
-                        {Math.round(ingredient.nutrients.carbs)}
-                      </div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-gray-500 text-xs sm:text-sm mb-1">
-                        Fat (g)
-                      </div>
-                      <div className="text-lg sm:text-xl font-bold text-gray-900">
-                        {Math.round(ingredient.nutrients.fat)}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
       </div>
 
-      {/* Show Breakdown Button - Outside card, below it */}
-      {hasMultipleIngredients && (
-        <div className="mt-3 text-center">
-          <button
-            onClick={() => setShowBreakdown(!showBreakdown)}
-            className="text-sm sm:text-base text-gray-600 hover:text-gray-900 transition-colors font-medium"
-          >
-            {showBreakdown ? "- Hide Breakdown" : "+ Show Breakdown"}
-          </button>
+      {/* Nutrition Grid - Labels on top, values below */}
+      <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-4">
+        <div className="text-center">
+          <div className="text-gray-500 text-xs sm:text-sm mb-1">
+            Calories
+          </div>
+          <div className="text-lg sm:text-xl font-bold text-gray-900">
+            {Math.round(meal.total_nutrients.calories)}
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-500 text-xs sm:text-sm mb-1">
+            Protein (g)
+          </div>
+          <div className="text-lg sm:text-xl font-bold text-gray-900">
+            {Math.round(meal.total_nutrients.protein)}
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-500 text-xs sm:text-sm mb-1">
+            Carbs (g)
+          </div>
+          <div className="text-lg sm:text-xl font-bold text-gray-900">
+            {Math.round(meal.total_nutrients.carbs)}
+          </div>
+        </div>
+        <div className="text-center">
+          <div className="text-gray-500 text-xs sm:text-sm mb-1">
+            Fat (g)
+          </div>
+          <div className="text-lg sm:text-xl font-bold text-gray-900">
+            {Math.round(meal.total_nutrients.fat)}
+          </div>
+        </div>
+      </div>
+
+      {/* Ingredients Breakdown - Table format */}
+      {showBreakdown && hasMultipleIngredients && (
+        <div className="mt-4">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b border-gray-200">
+                  <th className="text-left py-2 px-2 text-xs sm:text-sm text-gray-500 font-normal">
+                    Item
+                  </th>
+                  <th className="text-center py-2 px-2 text-xs sm:text-sm text-gray-500 font-normal">
+                    Calories
+                  </th>
+                  <th className="text-center py-2 px-2 text-xs sm:text-sm text-gray-500 font-normal">
+                    Protein (g)
+                  </th>
+                  <th className="text-center py-2 px-2 text-xs sm:text-sm text-gray-500 font-normal">
+                    Carbs (g)
+                  </th>
+                  <th className="text-center py-2 px-2 text-xs sm:text-sm text-gray-500 font-normal">
+                    Fat (g)
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {meal.ingredients.map((ingredient, ingredientIndex) => (
+                  <tr
+                    key={ingredientIndex}
+                    className={ingredientIndex < meal.ingredients.length - 1 ? "border-b border-gray-100" : ""}
+                  >
+                    <td className="py-3 px-2">
+                      <div>
+                        <div className="text-sm sm:text-base font-semibold text-gray-900">
+                          {ingredient.name}
+                        </div>
+                        <div className="text-xs sm:text-sm text-gray-500">
+                          {ingredient.serving_info}
+                        </div>
+                      </div>
+                    </td>
+                    <td className="text-center py-3 px-2 text-sm sm:text-base font-semibold text-gray-900">
+                      {Math.round(ingredient.nutrients.calories)}
+                    </td>
+                    <td className="text-center py-3 px-2 text-sm sm:text-base font-semibold text-gray-900">
+                      {Math.round(ingredient.nutrients.protein)}
+                    </td>
+                    <td className="text-center py-3 px-2 text-sm sm:text-base font-semibold text-gray-900">
+                      {Math.round(ingredient.nutrients.carbs)}
+                    </td>
+                    <td className="text-center py-3 px-2 text-sm sm:text-base font-semibold text-gray-900">
+                      {Math.round(ingredient.nutrients.fat)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
