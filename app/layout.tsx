@@ -23,14 +23,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // baseURL should be defined at runtime on Vercel
-  // If undefined, the client-side code will handle it
-  const effectiveBaseUrl = baseURL || "";
-  
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <NextChatSDKBootstrap baseUrl={effectiveBaseUrl} />
+        <NextChatSDKBootstrap baseUrl={baseURL} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

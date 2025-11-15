@@ -1,0 +1,8 @@
+{
+  "/_not-found/page": "/_not-found",
+  "/custom-page/page": "/custom-page",
+  "/favicon.ico/route": "/favicon.ico",
+  "/mcp/route": "/mcp",
+  "/nmacros/page": "/nmacros",
+  "/page": "/"
+}

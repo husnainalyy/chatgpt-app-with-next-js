@@ -1,0 +1,11 @@
+{
+  "pages": {
+    "/mcp/route": [
+      "static/chunks/3996deeca1881b47.js",
+      "static/chunks/47f477e3d2ef265b.js",
+      "static/chunks/150316a471952cee.js",
+      "static/chunks/8082ab48faca5ea1.js",
+      "static/chunks/turbopack-fdb90415acdc130a.js"
+    ]
+  }
+}
