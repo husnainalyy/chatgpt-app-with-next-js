@@ -135,11 +135,14 @@ export default function Macros() {
     >
       <main className="max-w-4xl mx-auto py-3 sm:py-4">
         <div className="space-y-4">
-          {meals.map((meal, mealIndex) => (
-            <div key={mealIndex} className="mb-0 shadow-none">
-              <MealCard meal={meal} />
-            </div>
-          ))}
+          {meals.map((meal, mealIndex, array) => {
+            const isLastMeal = mealIndex === array.length - 1;
+            return (
+              <div key={mealIndex} className="mb-0 shadow-none">
+                <MealCard meal={meal} isLast={isLastMeal} />
+              </div>
+            );
+          })}
         </div>
       </main>
     </div>
@@ -148,15 +151,18 @@ export default function Macros() {
 
 interface MealCardProps {
   meal: Meal;
+  isLast?: boolean;
 }
 
-function MealCard({ meal }: MealCardProps) {
+function MealCard({ meal, isLast = false }: MealCardProps) {
   const [showBreakdown, setShowBreakdown] = useState(false);
   const hasMultipleIngredients = meal.ingredients.length > 1;
 
+  const borderClass = isLast ? "border-b-0" : "border-b border-gray-200";
+
   return (
     <div className="flex justify-center w-full">
-      <div className="w-2xl border-b py-4">
+      <div className={`w-2xl py-4 ${borderClass}`}>
         <div className="flex justify-between items-center gap-3 p-4 pt-0">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">

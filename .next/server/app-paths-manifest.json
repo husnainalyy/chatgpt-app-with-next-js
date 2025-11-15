@@ -1,3 +1,4 @@
 {
-  "/api/analyze-food/route": "app/api/analyze-food/route.js"
+  "/api/analyze-food/route": "app/api/analyze-food/route.js",
+  "/web/page": "app/web/page.js"
 }

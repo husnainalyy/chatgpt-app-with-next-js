@@ -164,11 +164,17 @@ export default function WebPage() {
                                         </div>
                                     ) : message.mealData?.loggedMeals ? (
                                         <div>
-                                            {message.mealData.loggedMeals.map((meal, mealIndex) => (
-                                                <div key={mealIndex} className="mb-0 shadow-none">
-                                                    <MealCard meal={meal} />
-                                                </div>
-                                            ))}
+                                            {message.mealData.loggedMeals.map((meal, mealIndex, array) => {
+                                                const isLastMeal = mealIndex === array.length - 1;
+                                                return (
+                                                    <div key={mealIndex} className="mb-0 shadow-none">
+                                                        <MealCard 
+                                                            meal={meal} 
+                                                            isLast={isLastMeal}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
                                         </div>
                                     ) : (
                                         <div className="bg-gray-50 rounded-2xl px-4 py-3">
@@ -244,15 +250,18 @@ export default function WebPage() {
 // Meal Card Component (same as nmacros)
 interface MealCardProps {
     meal: Meal;
+    isLast?: boolean;
 }
 
-function MealCard({ meal }: MealCardProps) {
+function MealCard({ meal, isLast = false }: MealCardProps) {
     const [showBreakdown, setShowBreakdown] = useState(false);
     const hasMultipleIngredients = meal.ingredients.length > 1;
 
+    const borderClass = isLast ? "border-b-0" : "border-b border-gray-200";
+
     return (
         <div className="flex justify-center w-full">
-            <div className="border-b w-2xl py-4">
+            <div className={`w-2xl py-4 ${borderClass}`}>
                 <div className="flex justify-between items-center gap-3 p-4 pt-0">
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gray-100 rounded-xl flex items-center justify-center overflow-hidden">
