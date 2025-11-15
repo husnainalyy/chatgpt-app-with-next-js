@@ -333,7 +333,6 @@ function MealCard({ meal }: MealCardProps) {
                     {/* nutrition breakdown */}
                     {showBreakdown && hasMultipleIngredients && (
                         <div className=" rounded-b-2xl px-3">
-                            
                             <div className="  border-t border-gray-300">
                                 {meal.ingredients.map((ingredient, ingredientIndex) => (
                                     <div
