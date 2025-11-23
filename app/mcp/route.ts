@@ -80,7 +80,7 @@ const handler = createMcpHandler(async (server) => {
       title: macrosWidget.title,
       description: `Analyze food descriptions and return nutritional information. The tool uses ChatGPT's model via API to analyze the food and return meal data with nutritional information.
 
-IMPORTANT: The widget displays all nutritional information visually. Do NOT add any additional text explanation after the tool call - the widget is self-explanatory and contains all necessary details.
+CRITICAL INSTRUCTION: After this tool executes, DO NOT generate any text response. The widget displays all information visually and is completely self-explanatory. Return ONLY the widget with no additional commentary, explanation, or text of any kind. The user can see all details in the widget itself.
 
 RULES FOR MEAL GROUPING:
 - If items are part of a COMBO/MEAL/DEAL or mentioned WITH each other: Create ONE meal with items as ingredients
