@@ -38,9 +38,9 @@ const handler = createMcpHandler(async (server) => {
     title: "Analyze Food Macros",
     templateUri: "ui://widget/macros-template.html",
     invoking: "Analyzing food nutrition...",
-    invoked: "Food analysis complete",
+    invoked: "", // Empty to minimize text
     html: macrosHtml,
-    description: "Analyzes food descriptions and displays nutritional information in meal cards",
+    description: "Analyzes food descriptions and displays nutritional information in meal cards. The widget displays all information - no additional text explanation needed.",
     widgetDomain: baseURL,
   };
 
@@ -79,6 +79,8 @@ const handler = createMcpHandler(async (server) => {
     {
       title: macrosWidget.title,
       description: `Analyze food descriptions and return nutritional information. The tool uses ChatGPT's model via API to analyze the food and return meal data with nutritional information.
+
+IMPORTANT: The widget displays all nutritional information visually. Do NOT add any additional text explanation after the tool call - the widget is self-explanatory and contains all necessary details.
 
 RULES FOR MEAL GROUPING:
 - If items are part of a COMBO/MEAL/DEAL or mentioned WITH each other: Create ONE meal with items as ingredients
@@ -143,12 +145,7 @@ EXAMPLES:
         
         if (!apiKey) {
           return {
-            content: [
-              {
-                type: "text",
-                text: `Error: OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.`,
-              },
-            ],
+            content: [], // Empty content array - no text below the widget
             structuredContent: {
               error: "OpenAI API key not configured. Please set OPENAI_API_KEY environment variable.",
             },
