@@ -314,12 +314,7 @@ Return ONLY the JSON object with REAL nutritional values, nothing else.`;
 
         // Return the analyzed data with corrected totals
         return {
-          content: [
-            {
-              type: "text",
-              text: `Food analyzed: ${foodDescription}`,
-            },
-          ],
+          content: [], // Empty content array - no text below the widget
           structuredContent: {
             dailyTotals: correctedDailyTotals,
             loggedMeals: correctedMeals,
@@ -328,12 +323,7 @@ Return ONLY the JSON object with REAL nutritional values, nothing else.`;
         };
       } catch (error) {
         return {
-          content: [
-            {
-              type: "text",
-              text: `Error processing food analysis request: ${foodDescription}`,
-            },
-          ],
+          content: [], // Empty content array - no text below the widget
           structuredContent: {
             error: error instanceof Error ? error.message : "Failed to analyze food. Please try again.",
           },
